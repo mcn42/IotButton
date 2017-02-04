@@ -6,6 +6,12 @@
 package org.mnilsen.iotbutton;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.MessageAttributeValue;
+import com.amazonaws.services.sns.model.PublishRequest;
+import com.amazonaws.services.sns.model.PublishResult;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -15,9 +21,25 @@ public class ButtonHandler {
 
     public ButtonHandler() {
     }
-    
-    public void handleEvent(String data, Context ctx)
-    {
-        ctx.getLogger().log(String.format("Received event data: %s", data));
+
+    public void handleEvent(String data, Context ctx) {
+        String message = String.format("Received event data: %s", data);
+        ctx.getLogger().log(message);
+        AmazonSNSClient snsClient = new AmazonSNSClient();
+        
+        String phoneNumber = "+19086564206";
+        Map<String, MessageAttributeValue> smsAttributes
+                = new HashMap<>();
+        //<set SMS attributes>
+        sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
+    }
+
+    public static void sendSMSMessage(AmazonSNSClient snsClient, String message,
+            String phoneNumber, Map<String, MessageAttributeValue> smsAttributes) {
+        PublishResult result = snsClient.publish(new PublishRequest()
+                .withMessage(message)
+                .withPhoneNumber(phoneNumber)
+                .withMessageAttributes(smsAttributes));
+        System.out.println(result); // Prints the message ID.
     }
 }
