@@ -23,23 +23,25 @@ public class ButtonHandler {
     }
 
     public void handleEvent(String data, Context ctx) {
-        String message = String.format("Received event data: %s", data);
-        ctx.getLogger().log(message);
+        
         AmazonSNSClient snsClient = new AmazonSNSClient();
         
         String phoneNumber = "+1xxxxxxxxx";
         Map<String, MessageAttributeValue> smsAttributes
                 = new HashMap<>();
         //<set SMS attributes>
-        sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
+        String message = String.format("Received event data: %s ", data);
+        PublishResult res = sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
+        
+        ctx.getLogger().log(message + res);
     }
 
-    public static void sendSMSMessage(AmazonSNSClient snsClient, String message,
+    public static PublishResult sendSMSMessage(AmazonSNSClient snsClient, String message,
             String phoneNumber, Map<String, MessageAttributeValue> smsAttributes) {
         PublishResult result = snsClient.publish(new PublishRequest()
                 .withMessage(message)
                 .withPhoneNumber(phoneNumber)
                 .withMessageAttributes(smsAttributes));
-        System.out.println(result); // Prints the message ID.
+        return result;
     }
 }
