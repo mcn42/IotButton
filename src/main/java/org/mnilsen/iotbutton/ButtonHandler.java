@@ -18,6 +18,6 @@ public class ButtonHandler {
     
     public void handleEvent(String data, Context ctx)
     {
-        
+        ctx.getLogger().log(String.format("Received event data: %s", data));
     }
 }
