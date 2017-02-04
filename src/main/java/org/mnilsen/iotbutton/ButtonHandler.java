@@ -27,7 +27,7 @@ public class ButtonHandler {
         ctx.getLogger().log(message);
         AmazonSNSClient snsClient = new AmazonSNSClient();
         
-        String phoneNumber = "+19086564206";
+        String phoneNumber = "+1xxxxxxxxx";
         Map<String, MessageAttributeValue> smsAttributes
                 = new HashMap<>();
         //<set SMS attributes>
