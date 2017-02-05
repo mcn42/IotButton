@@ -11,6 +11,7 @@ import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,17 +24,28 @@ public class ButtonHandler {
     }
 
     public void handleEvent(String data, Context ctx) {
-        
+
         AmazonSNSClient snsClient = new AmazonSNSClient();
+        List<String> list = NotificationList.getNotificationList();
+
+        StringBuilder sb = new StringBuilder();
+        String message = String.format("Received event data: %s ", data);
+        sb.append(message);
+        sb.append("\n");
         
-        String phoneNumber = "+1xxxxxxxxx";
         Map<String, MessageAttributeValue> smsAttributes
                 = new HashMap<>();
         //<set SMS attributes>
-        String message = String.format("Received event data: %s ", data);
-        PublishResult res = sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
+        smsAttributes.put("AWS.SNS.SMS.SenderID", new MessageAttributeValue()
+                .withStringValue("mcn42-IoT") // The sender ID shown on the device.
+                .withDataType("String"));
         
-        ctx.getLogger().log(message + res);
+        for (String phoneNumber : list) {
+            PublishResult res = sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
+            sb.append(String.format("Notified %s", phoneNumber));
+        }
+
+        ctx.getLogger().log(sb.toString());
     }
 
     public static PublishResult sendSMSMessage(AmazonSNSClient snsClient, String message,
