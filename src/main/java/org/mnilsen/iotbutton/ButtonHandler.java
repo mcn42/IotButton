@@ -23,13 +23,14 @@ public class ButtonHandler {
     public ButtonHandler() {
     }
 
-    public void handleEvent(String data, Context ctx) {
+    public void handleEvent(Request data, Context ctx) {
 
         AmazonSNSClient snsClient = new AmazonSNSClient();
         List<String> list = NotificationList.getNotificationList();
 
         StringBuilder sb = new StringBuilder();
-        String message = String.format("Received event data: %s ", data);
+        String message = String.format("Received event data:\nSerial No.:\t%s\nClick Type:\t%s\nBatt. Level:\t%s",
+                data.getSerialNumber(),data.getClickType(),data.getBatteryVoltage());
         sb.append(message);
         sb.append("\n");
         
@@ -37,7 +38,7 @@ public class ButtonHandler {
                 = new HashMap<>();
         //<set SMS attributes>
         smsAttributes.put("AWS.SNS.SMS.SenderID", new MessageAttributeValue()
-                .withStringValue("mcn42-IoT") // The sender ID shown on the device.
+                .withStringValue("mcn42IoT") // The sender ID shown on the device.
                 .withDataType("String"));
         
         for (String phoneNumber : list) {

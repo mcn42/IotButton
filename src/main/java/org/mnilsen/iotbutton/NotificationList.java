@@ -17,7 +17,7 @@ public class NotificationList {
     
     static
     {
-        list.add("+1xxxxxxx");
+        list.add("+1xxxxxxxxx");
     }
     
     public static List<String> getNotificationList()
